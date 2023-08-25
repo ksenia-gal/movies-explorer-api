@@ -1,8 +1,8 @@
 const allowedCors = [
-  // 'https://kseniag.nomoreparties.co',
-  // 'http://kseniag.nomoreparties.co',
   'https://localhost:3000',
   'http:/localhost:3000',
+  'http://api.kgalkina.nomoredomainsicu.ru',
+  'https://api.kgalkina.nomoredomainsicu.ru',
 ];
 
 module.exports = (req, res, next) => {

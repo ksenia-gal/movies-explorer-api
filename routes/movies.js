@@ -11,6 +11,7 @@ const {
 // возвращает все сохранённые текущим пользователем фильмы
 router.get('/', getMovies);
 
+// eslint-disable-next-line max-len
 // создаёт фильм с переданными в теле country, director, duration, year, description, image, trailer, nameRU, nameEN и thumbnail, movieId
 router.post('/', celebrate({
   body: Joi.object().keys({
@@ -21,15 +22,18 @@ router.post('/', celebrate({
     description: Joi.string().required(), // ?
     image: Joi.string().required().custom((value, helpers) => {
       if (validator.isURL(value)) return value;
-      return helpers.message('Неверный URL')}),
+      return helpers.message('Неверный URL');
+    }),
     trailerLink: Joi.string().required().custom((value, helpers) => {
       if (validator.isURL(value)) return value;
-      return helpers.message('Неверный URL')}),
+      return helpers.message('Неверный URL');
+    }),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
     thumbnail: Joi.string().required().custom((value, helpers) => {
       if (validator.isURL(value)) return value;
-      return helpers.message('Неверный URL')}),
+      return helpers.message('Неверный URL');
+    }),
     movieId: Joi.number().required(),
   }),
 }), createMovie);

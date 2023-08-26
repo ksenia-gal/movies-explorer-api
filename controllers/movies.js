@@ -1,11 +1,12 @@
 const Movie = require('../models/movie');
 const ForbiddenError = require('../errors/forbiddenError');
-const BadRequestError = require('../errors/badRequestError');
+const ValidationError = require('../errors/validationError');
 const NotFoundError = require('../errors/notFoundError');
+const ConflictError = require('../errors/conflictError');
 
 // добавление всех сохраненных фильмов на страницу
 const getMovies = (req, res, next) => {
-  Movie.find({})
+  Movie.find({ owner: req.user._id })
     .then((movies) => res.send(movies))
     .catch(next);
 };
@@ -13,17 +14,39 @@ const getMovies = (req, res, next) => {
 // создание нового фильма
 const createMovie = (req, res, next) => {
   const {
-    // eslint-disable-next-line max-len
-    country, director, duration, year, description, image, trailerLink, nameRU, nameEN, thumbnail, movieId,
+    country,
+    director,
+    duration,
+    year,
+    description,
+    image,
+    trailerLink,
+    nameRU,
+    nameEN,
+    thumbnail,
+    movieId,
   } = req.body;
   Movie.create({
-    // eslint-disable-next-line max-len
-    country, director, duration, year, description, image, trailerLink, nameRU, nameEN, thumbnail, movieId, owner: req.user._id,
+    country,
+    director,
+    duration,
+    year,
+    description,
+    image,
+    trailerLink,
+    nameRU,
+    nameEN,
+    thumbnail,
+    movieId,
+    owner: req.user._id,
   })
     .then((movie) => res.status(201).send(movie))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequestError('Произошла ошибка при создании нового фильма, переданы некорректные данные');
+        throw new ValidationError('Произошла ошибка при создании нового фильма, переданы некорректные данные');
+      }
+      if (err.code === 11000) {
+        next(new ConflictError('Данный фильм уже добавлен'));
       }
     })
     .catch(next);

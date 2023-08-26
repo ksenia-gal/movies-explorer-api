@@ -8,16 +8,16 @@ const { errors } = require('celebrate');
 const cors = require('./middlewares/cors');
 const limiter = require('./middlewares/limiter');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const routes = require('./routes/router');
+const routes = require('./routes');
 const { errorHandler } = require('./middlewares/errorHandler');
 
 // Слушаем 3000 порт
-const { PORT = 3000 } = process.env;
+const { PORT = 3000, MONGO = 'mongodb://127.0.0.1:27017/bitfilmsdb' } = process.env;
 
 // создание приложения
 const app = express();
 
-mongoose.connect('mongodb://127.0.0.1:27017/bitfilmsdb');
+mongoose.connect(MONGO);
 
 app.use(helmet());
 

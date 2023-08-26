@@ -3,9 +3,8 @@ const jwt = require('jsonwebtoken'); // импортируем модуль json
 const { NODE_ENV, SECRET_KEY_DEV, SECRET_KEY } = require('../utils/constants');
 const User = require('../models/user');
 const NotFoundError = require('../errors/notFoundError');
-const BadRequestError = require('../errors/badRequestError');
+const ValidationError = require('../errors/validationError');
 const ConflictError = require('../errors/conflictError');
-const AuthorizationError = require('../errors/unauthorisedError');
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
@@ -19,7 +18,6 @@ const login = (req, res, next) => {
       );
         // вернем токен
       res.send({ token });
-      throw new AuthorizationError('Неправильные почта или пароль');
     })
     .catch(next);
 };
@@ -31,7 +29,7 @@ const getCurrentUser = (req, res, next) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Передан некорректный id пользователя'));
+        next(new ValidationError('Передан некорректный id пользователя'));
       }
       if (err.name === 'DocumentNotFoundError') {
         next(new NotFoundError('Запрашиваемый пользователь не найден'));
@@ -47,7 +45,7 @@ const createUser = (req, res, next) => {
     name, email, password,
   } = req.body;
   if (!password || password.length < 4) {
-    throw new NotFoundError('Пароль отсутствует или короче 4 символов');
+    throw new ValidationError('Пароль отсутствует или короче 4 символов');
   }
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
@@ -62,7 +60,7 @@ const createUser = (req, res, next) => {
       if (err.code === 11000) {
         next(new ConflictError('Пользователь с таким email уже существует'));
       } else if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
+        next(new ValidationError('Переданы некорректные данные при создании пользователя'));
       } else {
         next(err);
       }
@@ -81,10 +79,13 @@ const changeUserInfo = (req, res, next) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        throw new BadRequestError('Переданы некорректные данные при редактировании данных профиля');
+        throw new ValidationError('Переданы некорректные данные при редактировании данных пользователя');
       }
       if (err.name === 'DocumentNotFoundError') {
         next(new NotFoundError('Запрашиваемый пользователь не найден'));
+      }
+      if (err.code === 11000) {
+        next(new ConflictError('Пользователь с таким email уже существует'));
       }
     })
     .catch(next);

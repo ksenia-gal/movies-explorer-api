@@ -8,7 +8,7 @@ const { errors } = require('celebrate');
 const cors = require('./middlewares/cors');
 const limiter = require('./middlewares/limiter');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const routes = require('./routes');
+const routes = require('./routes/index');
 const { errorHandler } = require('./middlewares/errorHandler');
 
 // Слушаем 3000 порт

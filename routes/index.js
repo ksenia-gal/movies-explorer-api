@@ -3,7 +3,7 @@ const auth = require('../middlewares/auth');
 const userRouter = require('./users');
 const movieRouter = require('./movies');
 const { validateSignup, validateSignin } = require('../middlewares/validation');
-const { createUser, login } = require('../controllers/users');
+const { createUser, login, logout } = require('../controllers/users');
 const NotFoundError = require('../errors/notFoundError');
 
 // роуты, не требующие авторизации
@@ -18,6 +18,7 @@ router.use(auth);
 // роуты, которым авторизация нужна
 router.use('/users', userRouter);
 router.use('/movies', movieRouter);
+router.post('/signout', logout);
 
 router.use('/*', (req, res, next) => {
   next(new NotFoundError('Запрашиваемый ресурс не найден'));

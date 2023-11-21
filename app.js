@@ -1,8 +1,9 @@
 require('dotenv').config();
 
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
-const bodyParser = require('body-parser');
+// const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const cors = require('./middlewares/cors');
@@ -23,14 +24,17 @@ app.use(helmet());
 
 app.use(express.json());
 
-app.use(bodyParser.json());
-
+// app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(requestLogger);
 app.use(cors);
 app.get('/crash-test', () => {
   setTimeout(() => {
     throw new Error('Сервер сейчас упадёт');
   }, 0);
+});
+app.get('/posts', (req, res) => {
+  console.log(req.cookies.jwt); // достаём токен
 });
 
 app.use(limiter);

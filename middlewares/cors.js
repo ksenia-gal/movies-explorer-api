@@ -1,8 +1,8 @@
 const allowedCors = [
-  'https://localhost:3000',
-  'http:/localhost:3000',
+  'http://localhost:3000',
   'http://api.kgalkina.nomoredomainsicu.ru',
   'https://api.kgalkina.nomoredomainsicu.ru',
+  'http://localhost:3001',
 ];
 
 module.exports = (req, res, next) => {

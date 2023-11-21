@@ -8,16 +8,23 @@ const ConflictError = require('../errors/conflictError');
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
+  console.log(req.body);
   User.findUserByCredentials(email, password)
     .then((user) => {
+      console.log(NODE_ENV, SECRET_KEY, SECRET_KEY_DEV);
       // создадим токен
       const token = jwt.sign(
         { _id: user._id },
         NODE_ENV === 'production' ? SECRET_KEY : SECRET_KEY_DEV,
+        // JWT_SECRET,
         { expiresIn: '7d' },
       );
         // вернем токен
-      res.send({ token });
+      res.cookie('token', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+      })
+        .send({ token });
     })
     .catch(next);
 };
@@ -92,9 +99,14 @@ const changeUserInfo = (req, res, next) => {
     });
 };
 
+const logout = (req, res) => {
+  res.clearCookie('token').send({ message: 'Выход выполнен' });
+};
+
 module.exports = {
   login,
   getCurrentUser,
   createUser,
   changeUserInfo,
+  logout,
 };

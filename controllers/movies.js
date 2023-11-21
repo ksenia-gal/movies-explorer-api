@@ -7,7 +7,9 @@ const ConflictError = require('../errors/conflictError');
 // добавление всех сохраненных фильмов на страницу
 const getMovies = (req, res, next) => {
   Movie.find({ owner: req.user._id })
-    .then((movies) => res.send(movies))
+    .then((movies) => {
+      res.send(movies.map((movie) => movie));
+    })
     .catch(next);
 };
 

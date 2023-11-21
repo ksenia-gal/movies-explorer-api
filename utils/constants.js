@@ -7,9 +7,6 @@ const SECRET_KEY_DEV = 'dev-secret-key';
 // module.exports = {
 //   REGEX, NODE_ENV, SECRET_KEY, SECRET_KEY_DEV,
 // };
-module.exports = {
-  NODE_ENV, SECRET_KEY, SECRET_KEY_DEV,
-};
 
 const VALIDATION = 400;
 const UNAUTHORISED = 401; // передан неверный логин или пароль.
@@ -27,4 +24,7 @@ module.exports = {
   NOT_FOUND,
   CONFLICT,
   INTERNAL_SERVER_ERROR,
+  NODE_ENV,
+  SECRET_KEY,
+  SECRET_KEY_DEV,
 };

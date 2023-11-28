@@ -49,20 +49,16 @@ const getCurrentUser = (req, res, next) => {
 // создание пользователя
 const createUser = (req, res, next) => {
   const {
-    name, email, password,
+    email, password, name,
   } = req.body;
   if (!password || password.length < 4) {
     throw new ValidationError('Пароль отсутствует или короче 4 символов');
   }
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
-      name, email, password: hash,
+      email, name, password: hash,
     }))
-    .then((user) => res.status(201).send({
-      data: {
-        name: user.name, email: user.email,
-      },
-    }))
+    .then((user) => res.status(201).send(user.toJSON()))
     .catch((err) => {
       if (err.code === 11000) {
         next(new ConflictError('Пользователь с таким email уже существует'));

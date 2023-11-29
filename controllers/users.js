@@ -23,6 +23,7 @@ const login = (req, res, next) => {
       res.cookie('token', token, {
         maxAge: 3600000 * 24 * 7,
         httpOnly: true,
+        sameSite: true,
       })
         .send({ token });
     })
@@ -58,7 +59,7 @@ const createUser = (req, res, next) => {
     .then((hash) => User.create({
       email, name, password: hash,
     }))
-    .then((user) => res.status(201).send(user.toJSON()))
+    .then((user) => res.send(user.toJSON()))
     .catch((err) => {
       if (err.code === 11000) {
         next(new ConflictError('Пользователь с таким email уже существует'));

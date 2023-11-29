@@ -17,7 +17,12 @@ const validateSignup = celebrate({
 
 const validateSignin = celebrate({
   body: Joi.object().keys({
-    email: Joi.string().required().email(),
+    email: Joi.string()
+      .required()
+      .custom((value, helpers) => {
+        if (validator.isEmail(value)) return value;
+        return helpers.message('Неверный формат email');
+      }),
     password: Joi.string().required().min(4),
   }),
 });
